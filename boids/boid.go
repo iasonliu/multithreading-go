@@ -34,7 +34,10 @@ func (b *Boid) calcAcceleration() Vector2D {
 		}
 	}
 	rWlock.RUnlock()
-	acceleration := Vector2D{0, 0}
+	acceleration := Vector2D{
+		b.borderBounce(b.position.x, screenWidth),
+		b.borderBounce(b.position.y, screenHeight),
+	}
 	if count > 0 {
 		avgPosition, avgVelocity = avgPosition.DivisionV(count), avgVelocity.DivisionV(count)
 		accelAlignment := avgVelocity.Subtract(b.velocity).MultiplyV(adjRate)
@@ -43,6 +46,15 @@ func (b *Boid) calcAcceleration() Vector2D {
 		acceleration = acceleration.Add(accelAlignment).Add(accelCohesion).Add(accelSeparation)
 	}
 	return acceleration
+}
+
+func (b *Boid) borderBounce(pos, maxBorderPos float64) float64 {
+	if pos < viewRadius {
+		return 1 / pos
+	} else if pos > maxBorderPos-viewRadius {
+		return 1 / (pos - maxBorderPos)
+	}
+	return 0
 }
 
 func (b *Boid) moveOne() {
@@ -55,13 +67,6 @@ func (b *Boid) moveOne() {
 	boidMap[int(b.position.x)][int(b.position.y)] = -1
 	b.position = b.position.Add(b.velocity)
 	boidMap[int(b.position.x)][int(b.position.y)] = b.id
-	next := b.position.Add(b.velocity)
-	if next.x >= screenWidth || next.x < 0 {
-		b.velocity = Vector2D{-b.velocity.x, b.velocity.y}
-	}
-	if next.y >= screenHeight || next.y < 0 {
-		b.velocity = Vector2D{b.velocity.x, -b.velocity.y}
-	}
 	rWlock.Unlock()
 }
 
