@@ -14,7 +14,7 @@ type Boid struct {
 
 func (b *Boid) calcAcceleration() Vector2D {
 	uppper, lower := b.position.AddV(viewRadius), b.position.AddV(-viewRadius)
-	avgPosition, avgVelocity := Vector2D{0, 0}, Vector2D{0, 0}
+	avgPosition, avgVelocity, separation := Vector2D{0, 0}, Vector2D{0, 0}, Vector2D{0, 0}
 
 	// count of boids in view radius
 	count := 0.0
@@ -27,6 +27,7 @@ func (b *Boid) calcAcceleration() Vector2D {
 					count++
 					avgVelocity = avgVelocity.Add(boids[otherBoidId].velocity)
 					avgPosition = avgPosition.Add(boids[otherBoidId].position)
+					separation = separation.Add(b.position.Subtract(boids[otherBoidId].position).DivisionV(dist))
 				}
 
 			}
@@ -38,7 +39,8 @@ func (b *Boid) calcAcceleration() Vector2D {
 		avgPosition, avgVelocity = avgPosition.DivisionV(count), avgVelocity.DivisionV(count)
 		accelAlignment := avgVelocity.Subtract(b.velocity).MultiplyV(adjRate)
 		accelCohesion := avgPosition.Subtract(b.position).MultiplyV(adjRate)
-		acceleration = acceleration.Add(accelAlignment).Add(accelCohesion)
+		accelSeparation := separation.MultiplyV(adjRate)
+		acceleration = acceleration.Add(accelAlignment).Add(accelCohesion).Add(accelSeparation)
 	}
 	return acceleration
 }
