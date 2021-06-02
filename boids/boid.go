@@ -19,7 +19,7 @@ func (b *Boid) calcAcceleration() Vector2D {
 	// count of boids in view radius
 	count := 0.0
 
-	lock.Lock()
+	rWlock.RLock()
 	for i := math.Max(lower.x, 0); i <= math.Min(uppper.x, screenWidth); i++ {
 		for j := math.Max(lower.y, 0); j <= math.Min(uppper.y, screenHeight); j++ {
 			if otherBoidId := boidMap[int(i)][int(j)]; otherBoidId != -1 && otherBoidId != b.id {
@@ -32,7 +32,7 @@ func (b *Boid) calcAcceleration() Vector2D {
 			}
 		}
 	}
-	lock.Unlock()
+	rWlock.RUnlock()
 	acceleration := Vector2D{0, 0}
 	if count > 0 {
 		avgPosition, avgVelocity = avgPosition.DivisionV(count), avgVelocity.DivisionV(count)
@@ -46,7 +46,7 @@ func (b *Boid) calcAcceleration() Vector2D {
 func (b *Boid) moveOne() {
 	//calcAcceleration() has lock in, so must move out of this lock
 	acceleration := b.calcAcceleration()
-	lock.Lock()
+	rWlock.Lock()
 	// limit 1 pixel, don't jump more than 1 pixel. more smooth for simulation
 	b.velocity = b.velocity.Add(acceleration).limit(-1, 1)
 	// update new position for boid after move
@@ -60,7 +60,7 @@ func (b *Boid) moveOne() {
 	if next.y >= screenHeight || next.y < 0 {
 		b.velocity = Vector2D{b.velocity.x, -b.velocity.y}
 	}
-	lock.Unlock()
+	rWlock.Unlock()
 }
 
 func (b *Boid) start() {
