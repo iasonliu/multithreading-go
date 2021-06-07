@@ -43,7 +43,7 @@ func findArea(inputChannel chan string) {
 	waitGroup.Done()
 }
 func main() {
-	absPath, _ := filepath.Abs("./")
+	absPath, _ := filepath.Abs("../")
 	data, _ := ioutil.ReadFile(filepath.Join(absPath, "polygons.txt"))
 	text := string(data)
 
