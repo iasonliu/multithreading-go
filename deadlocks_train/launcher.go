@@ -5,8 +5,8 @@ import (
 	"sync"
 
 	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/iasonliu/multithreading/deadlocks_train/arbitrator"
 	"github.com/iasonliu/multithreading/deadlocks_train/common"
-	"github.com/iasonliu/multithreading/deadlocks_train/hierarchy"
 )
 
 var (
@@ -41,16 +41,16 @@ func main() {
 		intersections[i] = &common.Intersection{Id: i, Mutex: sync.Mutex{}, LockedBy: -1}
 	}
 
-	go hierarchy.MoveTrain(trains[0], 300, []*common.Crossing{{Position: 125, Intersection: intersections[0]},
+	go arbitrator.MoveTrain(trains[0], 300, []*common.Crossing{{Position: 125, Intersection: intersections[0]},
 		{Position: 175, Intersection: intersections[1]}})
 
-	go hierarchy.MoveTrain(trains[1], 300, []*common.Crossing{{Position: 125, Intersection: intersections[1]},
+	go arbitrator.MoveTrain(trains[1], 300, []*common.Crossing{{Position: 125, Intersection: intersections[1]},
 		{Position: 175, Intersection: intersections[2]}})
 
-	go hierarchy.MoveTrain(trains[2], 300, []*common.Crossing{{Position: 125, Intersection: intersections[2]},
+	go arbitrator.MoveTrain(trains[2], 300, []*common.Crossing{{Position: 125, Intersection: intersections[2]},
 		{Position: 175, Intersection: intersections[3]}})
 
-	go hierarchy.MoveTrain(trains[3], 300, []*common.Crossing{{Position: 125, Intersection: intersections[3]},
+	go arbitrator.MoveTrain(trains[3], 300, []*common.Crossing{{Position: 125, Intersection: intersections[3]},
 		{Position: 175, Intersection: intersections[0]}})
 
 	ebiten.SetWindowSize(320*3, 320*3)
