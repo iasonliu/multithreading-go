@@ -5,7 +5,7 @@ import (
 	"math"
 
 	"github.com/hajimehoshi/ebiten/v2"
-	. "github.com/iasonliu/multithreading/deadlocks_train/common"
+	"github.com/iasonliu/multithreading/deadlocks_train/common"
 )
 
 var (
@@ -42,7 +42,7 @@ func DrawTrains(screen *ebiten.Image) {
 	drawYTrain(screen, 3, -1, 310, 135)
 }
 
-func drawIntersection(screen *ebiten.Image, intersection *Intersection, x int, y int) {
+func drawIntersection(screen *ebiten.Image, intersection *common.Intersection, x int, y int) {
 	c := white
 	if intersection.LockedBy >= 0 {
 		c = colours[intersection.LockedBy]
